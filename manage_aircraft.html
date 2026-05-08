@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% block title %}Edit Flight — SkyLine Airways{% endblock %}
+
+{% block content %}
+<div class="fade-in-up" style="max-width:760px;margin:0 auto;">
+  <h2 class="page-title"><i class="bi bi-pencil-square"></i> Edit Flight #FL-{{ flight.flight_id }}</h2>
+
+  <div class="card-dark">
+    <div class="card-header-dark">
+      <h5><i class="bi bi-pencil"></i> Update Flight Details</h5>
+    </div>
+    <div class="card-body-dark">
+      <form method="POST" action="{{ url_for('edit_flight', fid=flight.flight_id) }}" class="form-dark">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Source Airport</label>
+            <select name="source" class="form-select" required>
+              {% for a in airports %}
+              <option value="{{ a.airport_id }}"
+                {% if a.airport_id == flight.source_airport_id %}selected{% endif %}>
+                {{ a.city }} — {{ a.name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Destination Airport</label>
+            <select name="destination" class="form-select" required>
+              {% for a in airports %}
+              <option value="{{ a.airport_id }}"
+                {% if a.airport_id == flight.destination_airport_id %}selected{% endif %}>
+                {{ a.city }} — {{ a.name }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Departure Date &amp; Time</label>
+            <input type="datetime-local" name="departure" class="form-control" required
+                   value="{{ flight.departure_time.strftime('%Y-%m-%dT%H:%M') }}" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Arrival Date &amp; Time</label>
+            <input type="datetime-local" name="arrival" class="form-control" required
+                   value="{{ flight.arrival_time.strftime('%Y-%m-%dT%H:%M') }}" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Aircraft</label>
+            <select name="aircraft" class="form-select" required>
+              {% for ac in aircraft %}
+              <option value="{{ ac.aircraft_id }}"
+                {% if ac.aircraft_id == flight.aircraft_id %}selected{% endif %}>
+                {{ ac.model }} (Cap: {{ ac.capacity }})
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Price per Seat (₹)</label>
+            <input type="number" name="price" class="form-control" step="0.01" min="1"
+                   value="{{ flight.price }}" required />
+          </div>
+          <div class="col-12 d-flex gap-2">
+            <button type="submit" class="btn btn-gold"><i class="bi bi-check-lg"></i> Update Flight</button>
+            <a href="{{ url_for('manage_flights') }}" class="btn btn-outline-gold">
+              <i class="bi bi-arrow-left"></i> Cancel
+            </a>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

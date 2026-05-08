@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% block title %}Login — SkyLine Airways{% endblock %}
+
+{% block content %}
+<div class="login-wrapper">
+  <div class="login-card fade-in-up">
+
+    <div class="login-brand">
+      <span class="plane-icon">✈</span>
+      <h1>SkyLine Airways</h1>
+      <p>Flight Management &amp; Booking System</p>
+    </div>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for cat, msg in messages %}
+          <div class="alert-custom
+            {% if cat == 'success' %}alert-success-c
+            {% elif cat == 'danger' %}alert-danger-c
+            {% elif cat == 'warning' %}alert-warning-c
+            {% else %}alert-info-c{% endif %} mb-3">
+            <i class="bi
+              {% if cat == 'success' %}bi-check-circle
+              {% elif cat == 'danger' %}bi-exclamation-circle
+              {% else %}bi-info-circle{% endif %}"></i>
+            {{ msg }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <div class="divider"></div>
+
+    <form method="POST" action="{{ url_for('login') }}" class="form-dark" id="loginForm" autocomplete="off">
+      <div class="mb-3">
+        <label class="form-label" for="username"><i class="bi bi-person"></i> Username</label>
+        <input type="text" class="form-control" id="username" name="username"
+               placeholder="Enter your username" required autofocus />
+      </div>
+
+      <div class="mb-4">
+        <label class="form-label" for="password"><i class="bi bi-lock"></i> Password</label>
+        <div class="position-relative">
+          <input type="password" class="form-control" id="password" name="password"
+                 placeholder="Enter your password" required />
+          <button type="button" id="togglePwd"
+                  style="position:absolute;right:10px;top:50%;transform:translateY(-50%);
+                         background:none;border:none;color:var(--muted);cursor:pointer;">
+            <i class="bi bi-eye" id="eyeIcon"></i>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-gold w-100 py-2" id="loginBtn">
+        <i class="bi bi-box-arrow-in-right"></i> Sign In
+      </button>
+    </form>
+
+    <div class="divider"></div>
+
+    <div style="text-align:center; font-size:.8rem; color:var(--muted);">
+      <p><i class="bi bi-shield-lock"></i> Demo Credentials</p>
+      <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;margin-top:.5rem;">
+        <div style="background:#1f1f1f;border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;">
+          <div style="color:var(--accent);font-weight:600;font-size:.78rem;">ADMIN</div>
+          <div>admin / admin123</div>
+        </div>
+        <div style="background:#1f1f1f;border:1px solid var(--border);border-radius:8px;padding:.5rem .9rem;">
+          <div style="color:var(--accent);font-weight:600;font-size:.78rem;">USER</div>
+          <div>john_doe / user123</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  document.getElementById('togglePwd').addEventListener('click', function() {
+    const pwd = document.getElementById('password');
+    const eye = document.getElementById('eyeIcon');
+    if (pwd.type === 'password') {
+      pwd.type = 'text'; eye.className = 'bi bi-eye-slash';
+    } else {
+      pwd.type = 'password'; eye.className = 'bi bi-eye';
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block title %}Edit Airport — SkyLine Airways{% endblock %}
+
+{% block content %}
+<div class="fade-in-up" style="max-width:520px;margin:0 auto;">
+  <h2 class="page-title"><i class="bi bi-pencil-square"></i> Edit Airport</h2>
+
+  <div class="card-dark">
+    <div class="card-header-dark">
+      <h5><i class="bi bi-pencil"></i> Update Airport Details</h5>
+    </div>
+    <div class="card-body-dark">
+      <form method="POST" action="{{ url_for('edit_airport', aid=airport.airport_id) }}" class="form-dark">
+        <div class="mb-3">
+          <label class="form-label">Airport Name</label>
+          <input type="text" name="name" class="form-control"
+                 value="{{ airport.name }}" required />
+        </div>
+        <div class="mb-4">
+          <label class="form-label">City</label>
+          <input type="text" name="city" class="form-control"
+                 value="{{ airport.city }}" required />
+        </div>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-gold"><i class="bi bi-check-lg"></i> Update</button>
+          <a href="{{ url_for('manage_airports') }}" class="btn btn-outline-gold">
+            <i class="bi bi-arrow-left"></i> Cancel
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

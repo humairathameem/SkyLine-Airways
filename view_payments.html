@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% block title %}Search Flights — SkyLine Airways{% endblock %}
+
+{% block content %}
+<div class="fade-in-up">
+
+  <!-- HERO SEARCH -->
+  <div class="search-hero mb-4">
+    <h2><i class="bi bi-search"></i> Find Your Flight</h2>
+    <p>Filter by route or date — or browse all available flights below</p>
+
+    <form method="POST" action="{{ url_for('search_flights') }}" class="form-dark mt-3" id="searchForm">
+      <div class="row g-3 align-items-end">
+        <div class="col-md-3">
+          <label class="form-label" style="color:rgba(255,255,255,.75);">
+            <i class="bi bi-geo-alt"></i> From (optional)
+          </label>
+          <select name="source" class="form-select">
+            <option value="">— Any Source —</option>
+            {% for a in airports %}
+            <option value="{{ a.airport_id }}">{{ a.city }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label" style="color:rgba(255,255,255,.75);">
+            <i class="bi bi-geo-alt-fill"></i> To (optional)
+          </label>
+          <select name="destination" class="form-select">
+            <option value="">— Any Destination —</option>
+            {% for a in airports %}
+            <option value="{{ a.airport_id }}">{{ a.city }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label" style="color:rgba(255,255,255,.75);">
+            <i class="bi bi-calendar3"></i> Date (optional)
+          </label>
+          <input type="date" name="date" class="form-control" id="dateInput" />
+        </div>
+        <div class="col-md-2">
+          <button type="submit" class="btn btn-gold w-100 py-2">
+            <i class="bi bi-funnel"></i> Filter
+          </button>
+        </div>
+        <div class="col-md-1">
+          <a href="{{ url_for('search_flights') }}" class="btn btn-outline-gold w-100 py-2" title="Reset">
+            <i class="bi bi-x-circle"></i>
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <!-- RESULTS HEADER -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;">
+    <h5 style="color:var(--muted);font-size:.82rem;text-transform:uppercase;letter-spacing:.5px;margin:0;">
+      <i class="bi bi-airplane"></i>
+      {% if searched %}
+        {{ flights|length }} Flight(s) matched your filters
+      {% else %}
+        All Available Flights — {{ flights|length }} total
+      {% endif %}
+    </h5>
+  </div>
+
+  <!-- FLIGHT CARDS -->
+  {% if flights %}
+  <div class="d-flex flex-column gap-3">
+    {% for f in flights %}
+    <div class="flight-card">
+
+      <!-- ROUTE -->
+      <div class="flight-route" style="flex:1.2;min-width:200px;">
+        <div style="text-align:center;">
+          <div class="route-city">{{ f.source_city }}</div>
+          <span class="route-code">{{ f.departure_time.strftime('%H:%M') }}</span>
+        </div>
+        <div class="route-line" style="min-width:80px;">
+          <div class="line"></div>
+          <div class="plane">✈</div>
+          <div class="line"></div>
+        </div>
+        <div style="text-align:center;">
+          <div class="route-city">{{ f.dest_city }}</div>
+          <span class="route-code">{{ f.arrival_time.strftime('%H:%M') }}</span>
+        </div>
+      </div>
+
+      <!-- META -->
+      <div class="flight-meta" style="flex:1.2;min-width:160px;">
+        <div><strong>Date:</strong> {{ f.departure_time.strftime('%d %b %Y') }}</div>
+        <div><strong>Aircraft:</strong> {{ f.aircraft_model }}</div>
+        <div><strong>Capacity:</strong> {{ f.capacity }} seats</div>
+        <div><strong>Flight:</strong> <span style="color:var(--accent);">FL-{{ f.flight_id }}</span></div>
+      </div>
+
+      <!-- PRICE + BOOK -->
+      <div class="flight-price" style="min-width:130px;">
+        <span class="price-val">₹{{ "{:,.0f}".format(f.price) }}</span>
+        <span class="price-label">per seat</span>
+        <a href="{{ url_for('book_flight', fid=f.flight_id) }}"
+           class="btn btn-gold mt-2 d-block text-center">
+          <i class="bi bi-ticket-perforated"></i> Book Now
+        </a>
+      </div>
+
+    </div>
+    {% endfor %}
+  </div>
+
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon"><i class="bi bi-airplane-engines"></i></div>
+    <p>No flights found matching your filters.</p>
+    <a href="{{ url_for('search_flights') }}" class="btn btn-outline-gold mt-2">
+      <i class="bi bi-arrow-clockwise"></i> Show All Flights
+    </a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Set today as default date placeholder
+  const dateInput = document.getElementById('dateInput');
+  if (dateInput && !dateInput.value) {
+    dateInput.min = new Date().toISOString().split('T')[0];
+  }
+</script>
+{% endblock %}

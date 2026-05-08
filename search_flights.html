@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block title %}Manage Flights — SkyLine Airways{% endblock %}
+
+{% block content %}
+<div class="fade-in-up">
+  <h2 class="page-title"><i class="bi bi-airplane-engines"></i> Manage Flights</h2>
+
+  <!-- ADD FLIGHT CARD -->
+  <div class="card-dark mb-4">
+    <div class="card-header-dark">
+      <h5><i class="bi bi-plus-circle"></i> Add New Flight</h5>
+    </div>
+    <div class="card-body-dark">
+      <form method="POST" action="{{ url_for('add_flight') }}" class="form-dark">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">Source Airport</label>
+            <select name="source" class="form-select" required>
+              <option value="">— Select Source —</option>
+              {% for a in airports %}
+              <option value="{{ a.airport_id }}">{{ a.city }} — {{ a.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Destination Airport</label>
+            <select name="destination" class="form-select" required>
+              <option value="">— Select Destination —</option>
+              {% for a in airports %}
+              <option value="{{ a.airport_id }}">{{ a.city }} — {{ a.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Aircraft</label>
+            <select name="aircraft" class="form-select" required>
+              <option value="">— Select Aircraft —</option>
+              {% for ac in aircraft %}
+              <option value="{{ ac.aircraft_id }}">{{ ac.model }} (Cap: {{ ac.capacity }})</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Departure Date &amp; Time</label>
+            <input type="datetime-local" name="departure" class="form-control" required />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Arrival Date &amp; Time</label>
+            <input type="datetime-local" name="arrival" class="form-control" required />
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Price per Seat (₹)</label>
+            <input type="number" name="price" class="form-control" placeholder="e.g. 5500" min="1" step="0.01" required />
+          </div>
+          <div class="col-12">
+            <button type="submit" class="btn btn-gold">
+              <i class="bi bi-plus-lg"></i> Add Flight
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FLIGHTS TABLE -->
+  <div class="card-dark">
+    <div class="card-header-dark">
+      <h5><i class="bi bi-list-ul"></i> All Flights</h5>
+      <span style="color:var(--accent);font-size:.82rem;">{{ flights|length }} record(s)</span>
+    </div>
+    <div class="card-body-dark p-0">
+      {% if flights %}
+      <div style="overflow-x:auto;">
+        <table class="table-dark-custom">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Route</th>
+              <th>Departure</th>
+              <th>Arrival</th>
+              <th>Aircraft</th>
+              <th>Price</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for f in flights %}
+            <tr>
+              <td><span style="color:var(--muted);">FL-{{ f.flight_id }}</span></td>
+              <td>
+                <div style="font-weight:600;">{{ f.source_city }}</div>
+                <div style="font-size:.75rem;color:var(--muted);">→ {{ f.dest_city }}</div>
+              </td>
+              <td>{{ f.departure_time.strftime('%d %b %Y, %H:%M') }}</td>
+              <td>{{ f.arrival_time.strftime('%d %b %Y, %H:%M') }}</td>
+              <td><span class="badge-info">{{ f.aircraft_model }}</span></td>
+              <td style="color:var(--accent);font-weight:600;">₹{{ "{:,.2f}".format(f.price) }}</td>
+              <td>
+                <a href="{{ url_for('edit_flight', fid=f.flight_id) }}"
+                   class="btn btn-burg btn-sm-icon me-1" title="Edit">
+                  <i class="bi bi-pencil"></i>
+                </a>
+                <a href="{{ url_for('delete_flight', fid=f.flight_id) }}"
+                   class="btn btn-sm-icon btn-danger bg-danger border-0" title="Delete"
+                   onclick="return confirm('Delete this flight?')">
+                  <i class="bi bi-trash"></i>
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-icon"><i class="bi bi-airplane"></i></div>
+        <p>No flights found. Add one above.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

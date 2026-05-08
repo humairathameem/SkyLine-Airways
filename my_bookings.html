@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}Manage Airports — SkyLine Airways{% endblock %}
+
+{% block content %}
+<div class="fade-in-up">
+  <h2 class="page-title"><i class="bi bi-geo-alt-fill"></i> Manage Airports</h2>
+
+  <div class="row g-4">
+    <!-- ADD FORM -->
+    <div class="col-lg-4">
+      <div class="card-dark" style="position:sticky;top:1.5rem;">
+        <div class="card-header-dark">
+          <h5><i class="bi bi-plus-circle"></i> Add Airport</h5>
+        </div>
+        <div class="card-body-dark">
+          <form method="POST" action="{{ url_for('add_airport') }}" class="form-dark">
+            <div class="mb-3">
+              <label class="form-label">Airport Name</label>
+              <input type="text" name="name" class="form-control"
+                     placeholder="e.g. Heathrow Airport" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label">City</label>
+              <input type="text" name="city" class="form-control"
+                     placeholder="e.g. London" required />
+            </div>
+            <button type="submit" class="btn btn-gold w-100">
+              <i class="bi bi-plus-lg"></i> Add Airport
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLE -->
+    <div class="col-lg-8">
+      <div class="card-dark">
+        <div class="card-header-dark">
+          <h5><i class="bi bi-list-ul"></i> All Airports</h5>
+          <span style="color:var(--accent);font-size:.82rem;">{{ airports|length }} airports</span>
+        </div>
+        <div class="card-body-dark p-0">
+          {% if airports %}
+          <div style="overflow-x:auto;">
+            <table class="table-dark-custom">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Airport Name</th>
+                  <th>City</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for a in airports %}
+                <tr>
+                  <td><span style="color:var(--muted);">{{ a.airport_id }}</span></td>
+                  <td>{{ a.name }}</td>
+                  <td><span class="badge-info">{{ a.city }}</span></td>
+                  <td>
+                    <a href="{{ url_for('edit_airport', aid=a.airport_id) }}"
+                       class="btn btn-burg btn-sm-icon me-1" title="Edit">
+                      <i class="bi bi-pencil"></i>
+                    </a>
+                    <a href="{{ url_for('delete_airport', aid=a.airport_id) }}"
+                       class="btn btn-sm-icon btn-danger bg-danger border-0" title="Delete"
+                       onclick="return confirm('Delete this airport?')">
+                      <i class="bi bi-trash"></i>
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          {% else %}
+          <div class="empty-state">
+            <div class="empty-icon"><i class="bi bi-geo-alt"></i></div>
+            <p>No airports yet. Add one on the left.</p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

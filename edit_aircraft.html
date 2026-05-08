@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}SkyLine Airways{% endblock %}</title>
+  <meta name="description" content="Flight Management and Booking System — SkyLine Airways" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+{% if session.user_id %}
+<nav class="navbar navbar-expand-lg navbar-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{{ url_for('admin_dashboard') if session.role == 'admin' else url_for('search_flights') }}">
+      <span class="logo-icon">✈</span> SkyLine Airways
+    </a>
+    <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav ms-auto align-items-center gap-1">
+
+        {% if session.role == 'admin' %}
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'admin_dashboard' %}active{% endif %}"
+             href="{{ url_for('admin_dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'manage_flights' %}active{% endif %}"
+             href="{{ url_for('manage_flights') }}"><i class="bi bi-airplane-engines"></i> Flights</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'manage_airports' %}active{% endif %}"
+             href="{{ url_for('manage_airports') }}"><i class="bi bi-geo-alt"></i> Airports</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'manage_aircraft' %}active{% endif %}"
+             href="{{ url_for('manage_aircraft') }}"><i class="bi bi-rocket"></i> Aircraft</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'view_bookings' %}active{% endif %}"
+             href="{{ url_for('view_bookings') }}"><i class="bi bi-ticket-perforated"></i> Bookings</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'view_payments' %}active{% endif %}"
+             href="{{ url_for('view_payments') }}"><i class="bi bi-credit-card"></i> Payments</a>
+        </li>
+        {% else %}
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'search_flights' %}active{% endif %}"
+             href="{{ url_for('search_flights') }}"><i class="bi bi-search"></i> Search Flights</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.endpoint == 'my_bookings' %}active{% endif %}"
+             href="{{ url_for('my_bookings') }}"><i class="bi bi-journal-check"></i> My Bookings</a>
+        </li>
+        {% endif %}
+
+        <li class="nav-item ms-2">
+          <span class="nav-link" style="color:var(--accent) !important; font-weight:600; font-size:.85rem;">
+            <i class="bi bi-person-circle"></i> {{ session.username }}
+            <span class="nav-badge">{{ session.role | upper }}</span>
+          </span>
+        </li>
+        <li class="nav-item">
+          <a class="btn btn-outline-gold btn-sm" href="{{ url_for('logout') }}">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </a>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+{% endif %}
+
+<div class="{% if not session.user_id %}{% else %}page-wrapper container-fluid{% endif %}">
+
+  <!-- FLASH MESSAGES -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="mb-3">
+        {% for cat, msg in messages %}
+          <div class="alert-custom
+            {% if cat == 'success' %}alert-success-c
+            {% elif cat == 'danger' %}alert-danger-c
+            {% elif cat == 'warning' %}alert-warning-c
+            {% else %}alert-info-c{% endif %}">
+            <i class="bi
+              {% if cat == 'success' %}bi-check-circle
+              {% elif cat == 'danger' %}bi-exclamation-circle
+              {% elif cat == 'warning' %}bi-exclamation-triangle
+              {% else %}bi-info-circle{% endif %}"></i>
+            {{ msg }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</div>
+
+{% if session.user_id %}
+<footer>
+  <span>✈ SkyLine Airways</span> — Flight Management System &copy; 2024
+</footer>
+{% endif %}
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

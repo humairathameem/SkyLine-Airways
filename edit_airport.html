@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% block title %}Book Flight — SkyLine Airways{% endblock %}
+
+{% block content %}
+<div class="fade-in-up" style="max-width:760px;margin:0 auto;">
+  <h2 class="page-title"><i class="bi bi-ticket-perforated"></i> Book Flight</h2>
+
+  <div class="row g-4">
+
+    <!-- FLIGHT SUMMARY -->
+    <div class="col-md-6">
+      <div class="card-dark h-100">
+        <div class="card-header-dark">
+          <h5><i class="bi bi-airplane"></i> Flight Details</h5>
+        </div>
+        <div class="card-body-dark">
+
+          <!-- Route Visual -->
+          <div style="text-align:center;padding:1.5rem 0;">
+            <div style="font-size:2rem;font-weight:800;color:#fff;">{{ flight.source_city }}</div>
+            <div style="font-size:.8rem;color:var(--muted);margin-bottom:.6rem;">{{ flight.source_name }}</div>
+            <div style="color:var(--accent);font-size:1.6rem;margin:.5rem 0;">✈</div>
+            <div style="font-size:2rem;font-weight:800;color:#fff;">{{ flight.dest_city }}</div>
+            <div style="font-size:.8rem;color:var(--muted);">{{ flight.dest_name }}</div>
+          </div>
+
+          <hr style="border-color:var(--border);" />
+
+          <!-- Meta -->
+          <div class="row g-2" style="font-size:.87rem;">
+            <div class="col-6">
+              <div style="color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.4px;">Departure
+              </div>
+              <div style="font-weight:600;margin-top:.2rem;">
+                {{ flight.departure_time.strftime('%d %b %Y') }}<br>
+                <span style="color:var(--accent);">{{ flight.departure_time.strftime('%H:%M') }}</span>
+              </div>
+            </div>
+            <div class="col-6">
+              <div style="color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.4px;">Arrival
+              </div>
+              <div style="font-weight:600;margin-top:.2rem;">
+                {{ flight.arrival_time.strftime('%d %b %Y') }}<br>
+                <span style="color:var(--accent);">{{ flight.arrival_time.strftime('%H:%M') }}</span>
+              </div>
+            </div>
+            <div class="col-6 mt-2">
+              <div style="color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.4px;">Aircraft
+              </div>
+              <div style="margin-top:.2rem;">{{ flight.aircraft_model }}</div>
+            </div>
+            <div class="col-6 mt-2">
+              <div style="color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.4px;">Flight ID
+              </div>
+              <div style="color:var(--accent);font-weight:700;margin-top:.2rem;">FL-{{ flight.flight_id }}</div>
+            </div>
+          </div>
+
+          <hr style="border-color:var(--border);" />
+          <div style="text-align:center;">
+            <div style="font-size:.8rem;color:var(--muted);">Price per seat</div>
+            <div style="font-size:2.2rem;font-weight:800;color:var(--accent);">₹{{ "{:,.0f}".format(flight.price) }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOOKING FORM -->
+    <div class="col-md-6">
+      <div class="card-dark h-100">
+        <div class="card-header-dark">
+          <h5><i class="bi bi-person-check"></i> Passenger Details</h5>
+        </div>
+        <div class="card-body-dark">
+          <form method="POST" action="{{ url_for('book_flight', fid=flight.flight_id) }}" class="form-dark"
+            id="bookForm">
+
+            <div class="mb-3">
+              <label class="form-label">Passenger Name</label>
+              <input type="text" class="form-control" value="{{ session.username }}" readonly
+                style="opacity:.7;cursor:not-allowed;" />
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label">Number of Seats</label>
+              <input type="number" name="seats" id="seatsInput" class="form-control" min="1" max="{{ flight.capacity }}"
+                value="1" required />
+              <div style="font-size:.78rem;color:var(--muted);margin-top:.35rem;">
+                Max available: {{ flight.capacity }} seats
+              </div>
+            </div>
+
+            <!-- LIVE TOTAL -->
+            <div class="booking-summary mb-4">
+              <div style="display:flex;justify-content:space-between;font-size:.87rem;color:var(--muted);">
+                <span>Price per seat</span>
+                <span>₹{{ "{:,.0f}".format(flight.price) }}</span>
+              </div>
+              <div
+                style="display:flex;justify-content:space-between;font-size:.87rem;color:var(--muted);margin-top:.4rem;">
+                <span>Seats</span>
+                <span id="seatsDisplay">1</span>
+              </div>
+              <hr style="border-color:rgba(201,161,74,.3);margin:.75rem 0;" />
+              <div
+                style="display:flex;justify-content:space-between;font-size:1.1rem;font-weight:700;color:var(--accent);">
+                <span>Total Amount</span>
+                <span id="totalDisplay">₹{{ "{:,.0f}".format(flight.price) }}</span>
+              </div>
+            </div>
+
+            <button type="submit" class="btn btn-gold w-100 py-2">
+              <i class="bi bi-check-circle"></i> Confirm Booking
+            </button>
+            <a href="{{ url_for('search_flights') }}" class="btn btn-outline-gold w-100 mt-2">
+              <i class="bi bi-arrow-left"></i> Back to Search
+            </a>
+          </form>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const pricePerSeat = {{ flight.price }};
+  const seatsInput = document.getElementById('seatsInput');
+  const seatsDisplay = document.getElementById('seatsDisplay');
+  const totalDisplay = document.getElementById('totalDisplay');
+
+  function updateTotal() {
+    const seats = parseInt(seatsInput.value) || 1;
+    const total = seats * pricePerSeat;
+    seatsDisplay.textContent = seats;
+    totalDisplay.textContent = '₹' + total.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+  }
+
+  seatsInput.addEventListener('input', updateTotal);
+  updateTotal();
+</script>
+{% endblock %}

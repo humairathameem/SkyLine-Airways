@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard — SkyLine Airways{% endblock %}
+
+{% block content %}
+<div class="row g-4 fade-in-up">
+
+  <!-- Page Title -->
+  <div class="col-12">
+    <h2 class="page-title"><i class="bi bi-speedometer2"></i> Admin Dashboard</h2>
+  </div>
+
+  <!-- STAT CARDS (clickable) -->
+  <div class="col-sm-6 col-xl-3">
+    <a href="{{ url_for('manage_flights') }}" class="text-decoration-none">
+      <div class="stat-card">
+        <div class="stat-icon burgundy"><i class="bi bi-airplane-engines"></i></div>
+        <div class="stat-info">
+          <h3>{{ flights_count }}</h3>
+          <p>Total Flights</p>
+        </div>
+        <i class="bi bi-arrow-right-circle ms-auto" style="color:var(--accent);opacity:.5;font-size:1.2rem;"></i>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-sm-6 col-xl-3">
+    <a href="{{ url_for('view_bookings') }}" class="text-decoration-none">
+      <div class="stat-card">
+        <div class="stat-icon gold"><i class="bi bi-ticket-perforated"></i></div>
+        <div class="stat-info">
+          <h3>{{ bookings_count }}</h3>
+          <p>Total Bookings</p>
+        </div>
+        <i class="bi bi-arrow-right-circle ms-auto" style="color:var(--accent);opacity:.5;font-size:1.2rem;"></i>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-sm-6 col-xl-3">
+    <a href="{{ url_for('view_bookings') }}" class="text-decoration-none">
+      <div class="stat-card">
+        <div class="stat-icon blue"><i class="bi bi-people"></i></div>
+        <div class="stat-info">
+          <h3>{{ users_count }}</h3>
+          <p>Registered Users</p>
+        </div>
+        <i class="bi bi-arrow-right-circle ms-auto" style="color:var(--accent);opacity:.5;font-size:1.2rem;"></i>
+      </div>
+    </a>
+  </div>
+
+  <div class="col-sm-6 col-xl-3">
+    <a href="{{ url_for('view_payments') }}" class="text-decoration-none">
+      <div class="stat-card">
+        <div class="stat-icon green"><i class="bi bi-currency-rupee"></i></div>
+        <div class="stat-info">
+          <h3>₹{{ "{:,.0f}".format(revenue) }}</h3>
+          <p>Revenue Collected</p>
+        </div>
+        <i class="bi bi-arrow-right-circle ms-auto" style="color:var(--accent);opacity:.5;font-size:1.2rem;"></i>
+      </div>
+    </a>
+  </div>
+
+  <!-- QUICK ACTIONS -->
+  <div class="col-12 mt-2">
+    <h5 style="color:var(--muted);font-size:.82rem;text-transform:uppercase;letter-spacing:.6px;margin-bottom:1rem;">
+      Quick Actions
+    </h5>
+    <div class="row g-3">
+
+      <div class="col-sm-6 col-lg-3">
+        <a href="{{ url_for('manage_flights') }}" class="card-dark d-block p-4 text-decoration-none text-center" style="color:var(--text)">
+          <div style="font-size:2.2rem;color:var(--accent);margin-bottom:.6rem;"><i class="bi bi-airplane-engines"></i></div>
+          <div style="font-weight:600;font-size:.95rem;">Manage Flights</div>
+          <div style="font-size:.78rem;color:var(--muted);margin-top:.2rem;">Add, edit, delete flights</div>
+        </a>
+      </div>
+
+      <div class="col-sm-6 col-lg-3">
+        <a href="{{ url_for('manage_airports') }}" class="card-dark d-block p-4 text-decoration-none text-center" style="color:var(--text)">
+          <div style="font-size:2.2rem;color:var(--accent);margin-bottom:.6rem;"><i class="bi bi-geo-alt-fill"></i></div>
+          <div style="font-weight:600;font-size:.95rem;">Manage Airports</div>
+          <div style="font-size:.78rem;color:var(--muted);margin-top:.2rem;">Add, edit, delete airports</div>
+        </a>
+      </div>
+
+      <div class="col-sm-6 col-lg-3">
+        <a href="{{ url_for('manage_aircraft') }}" class="card-dark d-block p-4 text-decoration-none text-center" style="color:var(--text)">
+          <div style="font-size:2.2rem;color:var(--accent);margin-bottom:.6rem;"><i class="bi bi-rocket-takeoff"></i></div>
+          <div style="font-weight:600;font-size:.95rem;">Manage Aircraft</div>
+          <div style="font-size:.78rem;color:var(--muted);margin-top:.2rem;">Fleet management</div>
+        </a>
+      </div>
+
+      <div class="col-sm-6 col-lg-3">
+        <a href="{{ url_for('view_bookings') }}" class="card-dark d-block p-4 text-decoration-none text-center" style="color:var(--text)">
+          <div style="font-size:2.2rem;color:var(--accent);margin-bottom:.6rem;"><i class="bi bi-journal-check"></i></div>
+          <div style="font-weight:600;font-size:.95rem;">View Bookings</div>
+          <div style="font-size:.78rem;color:var(--muted);margin-top:.2rem;">All reservations</div>
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- INFO PANEL -->
+  <div class="col-12 mt-2">
+    <div class="card-dark">
+      <div class="card-header-dark">
+        <h5><i class="bi bi-info-circle"></i> System Overview</h5>
+      </div>
+      <div class="card-body-dark">
+        <div class="row g-3" style="font-size:.87rem;">
+          <div class="col-md-4">
+            <div style="color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;">Database</div>
+            <div style="margin-top:.25rem;">MySQL — flight_db</div>
+          </div>
+          <div class="col-md-4">
+            <div style="color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;">Framework</div>
+            <div style="margin-top:.25rem;">Python Flask</div>
+          </div>
+          <div class="col-md-4">
+            <div style="color:var(--muted);font-size:.75rem;text-transform:uppercase;letter-spacing:.5px;">Logged In As</div>
+            <div style="margin-top:.25rem;color:var(--accent);font-weight:600;">{{ session.username }} (Admin)</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
